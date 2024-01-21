@@ -14,13 +14,13 @@ class Portfolio(Base):
 
     def __init__(self, symbol:str, quantity:float, price:float):
         """
-        Cria um cliente
+        Create a new Crypto inside the Portfolio
 
         Arguments:
-            nome: nome do cliente.
-            telefone: telefone do cliente
-            email: email do cliente
-            data_insercao: data de quando o cliente foi inserido à base
+            symbol: ticker of the crypto.
+            quantity: total quantity amount.
+            price: total spent in that crypto in cash.
+            data_insercao: the data when the crypto was added to portfolio.
         """
         self.symbol = symbol
         self.quantity = quantity
