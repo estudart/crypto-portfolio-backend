@@ -1,34 +1,30 @@
-from flask import Flask, jsonify, redirect, request, send_from_directory, render_template
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from flask_openapi3 import OpenAPI, Info, Tag
-from urllib.parse import unquote
-from typing import List
+from flask import Flask, jsonify, redirect, request
+from flasgger import Swagger
+from flask_restful import Api, Resource
 
-from model import Session, ExecOrder, Portfolio, __init__
+from model import *
 from schemas import *
 
 from flask_cors import CORS
 
-from pydantic import BaseModel
-
-info = Info(title="Connect Guides API", version="1.0.0")
-app = OpenAPI(__name__, info=info)
+app = Flask(__name__)
 CORS(app)
+api = Api(app)
 
 
-# Definindo tags
-home_tag = Tag(name="Documentação", description="Seleção de documentação: Swagger, Redoc ou RapiDoc")
-exec_tag = Tag(name="ExecOrders", description="Ordens executadas")
-portfolio_tag = Tag(name="Get full Portfolio", description="Get your Portfolio")
-lugar_tag = Tag(name="Portifolio", description="Portfolio")
+class HomeResource(Resource):
+    def get(self):
+        """
+        Welcome to the home page!
 
-
-
-@app.get('/', tags=[home_tag])
-def home():
-    """Redireciona para /openapi, tela que permite a escolha do estilo de documentação.
-    """
-    return redirect('/openapi')
+        ---
+        tags:
+            - Welcome
+        responses:
+            200:
+                description: A welcome message
+        """
+        return {"message": "Welcome to the home page"}
 
 
 # Essa rota fica responsavel por adicionar novos lugares na base do site
