@@ -9,3 +9,4 @@ class PortfolioSchema(Schema):
     price = fields.Float()
 
 portfolio_schema = PortfolioSchema()
+portfolios_schema = PortfolioSchema(many=True)

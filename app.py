@@ -44,14 +44,32 @@ class HomeResource(Resource):
         return {"message": "Welcome to the home page"}
 
 
-class ExecOrderResource(Resource):
-    def post(self):
+class PortfolioResource(Resource):
+    def get(self):
         """
-        Welcome to the home page!
+        Get portfolio information
 
         ---
         tags:
-            - Welcome
+            - Portfolio
+        responses:
+            200:
+                description: A welcome message
+        """
+        session = Session()
+        portfolio_all = session.query(Portfolio).all()
+        portfolio_json = portfolios_schema.dump(portfolio_all)
+        return portfolio_json
+
+
+class ExecOrderResource(Resource):
+    def post(self):
+        """
+        Get information regarding the executed orders
+
+        ---
+        tags:
+            - Executed Orders
         parameters:
             - name: symbol
               in: formData
@@ -112,4 +130,5 @@ class ExecOrderResource(Resource):
             return jsonify({"error": str(e)}), 500
 
 api.add_resource(HomeResource, "/")
+api.add_resource(PortfolioResource, "/portfolio")
 api.add_resource(ExecOrderResource, "/exec_order")
