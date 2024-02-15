@@ -7,3 +7,7 @@ pydantic
 SQLAlchemy
 SQLAlchemy-Utils
 typing_extensions
+flasgger
+marshmallow
+flask-restful
+python-dotenv

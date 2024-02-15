@@ -9,7 +9,7 @@ import os
 
 # importando os elementos definidos no modelo
 from model.base import Base
-from model.order import ExecOrder
+from model.execorder import ExecOrder
 from model.portfolio import Portfolio
 #from model.portfolio import Portfolio
 
