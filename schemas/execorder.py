@@ -8,6 +8,7 @@ class ExecOrderSchema(Schema):
     price = fields.Float()
     side = fields.Str()
     currency = fields.Str()
+    data_insercao = fields.DateTime()
 
 exec_order_schema = ExecOrderSchema()
 exec_orders_schema = ExecOrderSchema(many=True)

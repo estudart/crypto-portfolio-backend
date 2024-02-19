@@ -44,7 +44,7 @@ class HomeResource(Resource):
         return {"message": "Welcome to the home page"}
 
 
-class PortfolioResource(Resource):
+class PortfoliosResource(Resource):
     def get(self):
         """
         Get portfolio information
@@ -60,6 +60,30 @@ class PortfolioResource(Resource):
         portfolio_all = session.query(Portfolio).all()
         portfolio_json = portfolios_schema.dump(portfolio_all)
         return portfolio_json
+
+class PortfolioResource(Resource):   
+    def delete(self, symbol):
+        """
+        Get portfolio information
+
+        ---
+        tags:
+            - Portfolio
+        parameters:
+            - name: symbol
+              in: path
+              type: string
+              required: true
+        responses:
+            200:
+                description: A welcome message
+        """
+        session = Session()
+        found_crypto = session.query(Portfolio).filter(Portfolio.symbol == symbol)
+        found_crypto.delete()
+        session.commit()
+        return {"message": "Success"}
+
 
 
 class ExecOrderResource(Resource):
@@ -128,7 +152,14 @@ class ExecOrderResource(Resource):
             # Handle exceptions, such as database errors
             session.rollback()
             return jsonify({"error": str(e)}), 500
+    
+    def get(self):
+        session = Session()
+        exec_orders = session.query(ExecOrder).all()
+        json_exec_orders = exec_orders_schema.dump(exec_orders)
+        return json_exec_orders
 
 api.add_resource(HomeResource, "/")
-api.add_resource(PortfolioResource, "/portfolio")
+api.add_resource(PortfoliosResource, "/portfolio")
+api.add_resource(PortfolioResource, "/portfolio/<string:symbol>")
 api.add_resource(ExecOrderResource, "/exec_order")
