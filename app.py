@@ -154,6 +154,16 @@ class ExecOrderResource(Resource):
             return jsonify({"error": str(e)}), 500
     
     def get(self):
+        """
+        Get executed orders
+
+        ---
+        tags:
+            - Executed Orders
+        responses:
+            200:
+                description: A welcome message
+        """
         session = Session()
         exec_orders = session.query(ExecOrder).all()
         json_exec_orders = exec_orders_schema.dump(exec_orders)
