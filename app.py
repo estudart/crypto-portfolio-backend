@@ -119,8 +119,10 @@ class ExecOrderResource(Resource):
             200:
                 description: A welcome message
         """
-        json_data = request.form
+        json_data = request.json
         json_data = exec_order_schema.dump(json_data)
+        print(request.json['symbol'])
+
 
         try:
             session = Session()
@@ -146,12 +148,12 @@ class ExecOrderResource(Resource):
             session.add(new_order)
             session.commit()
 
-            return jsonify(json_data)
+            return {"message": "Success"}
 
         except Exception as e:
             # Handle exceptions, such as database errors
             session.rollback()
-            return jsonify({"error": str(e)}), 500
+            return {"error": str(e)}, 500
     
     def get(self):
         """
