@@ -14,3 +14,9 @@ class ExecOrder(Base):
     price = Column(Float)
     currency = Column(String)
     data_insercao = Column(DateTime, default=datetime.now())
+
+    # Define a new column to store the user ID
+    user_id = Column(Integer, ForeignKey('users.id'))
+
+    # Define a relationship with the User class
+    user = relationship("Users", back_populates="portfolio")

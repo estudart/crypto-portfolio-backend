@@ -6,7 +6,8 @@ class Users(Base):
     __tablename__ = 'users'
 
     id = Column('pk_users' , Integer, primary_key=True)
-    email = Column(String)
-    password = Column(String)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
 
-    portfolios = relationship("Portfolio", back_populates="users")
+    portfolio = relationship("Portfolio", back_populates="users")
+    executed = relationship("ExecOrder", back_populates="exec_orders")

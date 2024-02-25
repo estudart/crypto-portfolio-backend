@@ -2,6 +2,8 @@ from flask import Flask, jsonify, redirect, request
 from flask_cors import CORS
 from flasgger import Swagger
 from flask_restful import Api, Resource
+from passlib.hash import pbkdf2_sha256
+
 
 from model import *
 from schemas import *
@@ -9,6 +11,8 @@ from schemas import *
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
+
+app.config["JWT_SECRET_KEY"] = "12521164106679473705742150032613387626"
 
 swagger_config = {
     "headers": [
@@ -42,6 +46,16 @@ class HomeResource(Resource):
                 description: A welcome message
         """
         return {"message": "Welcome to the home page"}
+
+
+class RegisterUser(Resource):
+    def post(self):
+
+        session = Session()
+
+        if session.query(Users)
+
+        return
 
 
 class PortfoliosResource(Resource):

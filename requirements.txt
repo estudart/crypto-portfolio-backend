@@ -12,3 +12,6 @@ marshmallow
 flask-restful
 python-dotenv
 python-binanace
+Flask-JWT-extended
+secrets
+passlib

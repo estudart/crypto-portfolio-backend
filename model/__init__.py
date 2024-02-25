@@ -11,6 +11,7 @@ import os
 from model.base import Base
 from model.execorder import ExecOrder
 from model.portfolio import Portfolio
+from model.users import Users
 #from model.portfolio import Portfolio
 
 
