@@ -51,11 +51,23 @@ class HomeResource(Resource):
 class RegisterUser(Resource):
     def post(self):
 
+        json_data = request.json
+        #json_data = user_schema.dump(json_data)
+
         session = Session()
 
-        if session.query(Users)
+        if session.query(Users).filter(Users.email == json_data['email']).first():
+            return {"message": "user already registered"}
+        
+        user = Users(
+            email=json_data['email'], 
+            password=pbkdf2_sha256.hash(json_data['password'])
+        )
 
-        return
+        session.add(user)
+        session.commit()
+
+        return {"message": "User created"}, 201
 
 
 class PortfoliosResource(Resource):
@@ -189,3 +201,4 @@ api.add_resource(HomeResource, "/")
 api.add_resource(PortfoliosResource, "/portfolio")
 api.add_resource(PortfolioResource, "/portfolio/<string:symbol>")
 api.add_resource(ExecOrderResource, "/exec_order")
+api.add_resource(RegisterUser, "/register_user")

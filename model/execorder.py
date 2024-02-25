@@ -19,4 +19,4 @@ class ExecOrder(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
 
     # Define a relationship with the User class
-    user = relationship("Users", back_populates="portfolio")
+    user = relationship("Users", back_populates="executed")
