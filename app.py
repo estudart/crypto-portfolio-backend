@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flasgger import Swagger
 from flask_restful import Api, Resource
 from passlib.hash import pbkdf2_sha256
-from flask_jwt_extended import create_access_token, JWTManager
+from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
 
 
 from model import *
@@ -128,56 +128,30 @@ class PortfolioResource(Resource):
         return {"message": "Success"}
 
 
-
 class ExecOrderResource(Resource):
+    @jwt_required()
     def post(self):
         """
         Get information regarding the executed orders
 
-        ---
-        tags:
-            - Executed Orders
-        parameters:
-            - name: symbol
-              in: formData
-              type: string
-              required: true
-            - name: side
-              in: formData
-              type string
-              required: true
-            - name: quantity
-              in: formData
-              type: float
-              required: true
-            - name: price
-              in: formData
-              type: float
-              required: true
-            - name: currency
-              in: formData
-              type: string
-              required: true
-        responses:
-            200:
-                description: A welcome message
         """
         json_data = request.json
-        json_data = exec_order_schema.dump(json_data)
-        print(request.json['symbol'])
-
+        print(json_data['symbol'])
+        current_user_id = get_jwt_identity()
 
         try:
             session = Session()
 
-            find_portfolio = session.query(Portfolio).filter(Portfolio.symbol == json_data["symbol"]).first()
+            # Check if the portfolio exists for the symbol and user ID
+            find_portfolio = session.query(Portfolio).filter(Portfolio.symbol == json_data["symbol"], Portfolio.user_id == current_user_id).first()
 
             if not find_portfolio:
                 # Create a new portfolio entry if it doesn't exist
-                new_portfolio = {"symbol": json_data["symbol"], "quantity": 0, "price": 0}
+                new_portfolio = {"symbol": json_data["symbol"], "quantity": 0, "price": 0, "user_id": current_user_id}
                 find_portfolio = Portfolio(**new_portfolio)
                 session.add(find_portfolio)
 
+            # Update portfolio based on order
             if json_data["side"] == "BUY":
                 find_portfolio.quantity += json_data["quantity"]
                 find_portfolio.price += json_data["price"]
@@ -185,9 +159,11 @@ class ExecOrderResource(Resource):
                 find_portfolio.quantity -= json_data["quantity"]
                 find_portfolio.price -= json_data["price"]
             else:
-                return jsonify({"error": "Invalid side specified"}), 400
+                return {"error": "Invalid side specified"}, 400
 
-            new_order = ExecOrder(**json_data)
+            # Create a new order entry
+            user_order = {"symbol": json_data["symbol"], "side": json_data["side"], "quantity": json_data["quantity"], "price": json_data["price"], "currency": json_data["currency"],"user_id": current_user_id}
+            new_order = ExecOrder(**user_order)
             session.add(new_order)
             session.commit()
 
@@ -197,7 +173,8 @@ class ExecOrderResource(Resource):
             # Handle exceptions, such as database errors
             session.rollback()
             return {"error": str(e)}, 500
-    
+
+    @jwt_required()
     def get(self):
         """
         Get executed orders
@@ -209,8 +186,9 @@ class ExecOrderResource(Resource):
             200:
                 description: A welcome message
         """
+        current_user_id = get_jwt_identity()
         session = Session()
-        exec_orders = session.query(ExecOrder).all()
+        exec_orders = session.query(ExecOrder).filter(ExecOrder.user_id == current_user_id).all()
         json_exec_orders = exec_orders_schema.dump(exec_orders)
         return json_exec_orders
 
