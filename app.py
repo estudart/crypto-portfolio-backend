@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flasgger import Swagger
 from flask_restful import Api, Resource
 from passlib.hash import pbkdf2_sha256
+from flask_jwt_extended import create_access_token, JWTManager
 
 
 from model import *
@@ -12,7 +13,9 @@ app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
+
 app.config["JWT_SECRET_KEY"] = "12521164106679473705742150032613387626"
+jwt = JWTManager(app)
 
 swagger_config = {
     "headers": [
@@ -69,6 +72,20 @@ class RegisterUser(Resource):
 
         return {"message": "User created"}, 201
 
+
+class UserLogin(Resource):
+    def post(self):
+        json_data = request.json
+
+        session = Session()
+
+        user = session.query(Users).filter(Users.email == json_data['email']).first()
+
+        if user and pbkdf2_sha256.verify(json_data['password'], user.password):
+            access_token = create_access_token(identity=user.id)
+            return {"access_token": access_token}
+
+        return {"message": "Invalid credentials"}
 
 class PortfoliosResource(Resource):
     def get(self):
@@ -202,3 +219,4 @@ api.add_resource(PortfoliosResource, "/portfolio")
 api.add_resource(PortfolioResource, "/portfolio/<string:symbol>")
 api.add_resource(ExecOrderResource, "/exec_order")
 api.add_resource(RegisterUser, "/register_user")
+api.add_resource(UserLogin, "/login")
