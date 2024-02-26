@@ -4,7 +4,7 @@ from flasgger import Swagger
 from flask_restful import Api, Resource
 from passlib.hash import pbkdf2_sha256
 from flask_jwt_extended import create_access_token, JWTManager, jwt_required, get_jwt_identity
-
+from datetime import timedelta
 
 from model import *
 from schemas import *
@@ -83,7 +83,8 @@ class UserLogin(Resource):
         user = session.query(Users).filter(Users.email == json_data['email']).first()
 
         if user and pbkdf2_sha256.verify(json_data['password'], user.password):
-            access_token = create_access_token(identity=user.id)
+            expires = timedelta(hours=24)
+            access_token = create_access_token(identity=user.id, expires_delta=expires)
             return {"access_token": access_token}
 
         return {"message": "Invalid credentials"}
