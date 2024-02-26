@@ -76,6 +76,7 @@ class RegisterUser(Resource):
 class UserLogin(Resource):
     def post(self):
         json_data = request.json
+        print(json_data['email'])
 
         session = Session()
 
@@ -88,6 +89,7 @@ class UserLogin(Resource):
         return {"message": "Invalid credentials"}
 
 class PortfoliosResource(Resource):
+    @jwt_required()
     def get(self):
         """
         Get portfolio information
@@ -99,8 +101,9 @@ class PortfoliosResource(Resource):
             200:
                 description: A welcome message
         """
+        current_user_id = get_jwt_identity()
         session = Session()
-        portfolio_all = session.query(Portfolio).all()
+        portfolio_all = session.query(Portfolio).filter(Portfolio.user_id == current_user_id).all()
         portfolio_json = portfolios_schema.dump(portfolio_all)
         return portfolio_json
 
@@ -138,6 +141,7 @@ class ExecOrderResource(Resource):
         json_data = request.json
         print(json_data['symbol'])
         current_user_id = get_jwt_identity()
+        print(current_user_id)
 
         try:
             session = Session()
@@ -172,6 +176,7 @@ class ExecOrderResource(Resource):
         except Exception as e:
             # Handle exceptions, such as database errors
             session.rollback()
+            print(str(e))
             return {"error": str(e)}, 500
 
     @jwt_required()

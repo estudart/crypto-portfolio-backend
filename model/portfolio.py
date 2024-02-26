@@ -5,8 +5,8 @@ from model import Base
 
 class Portfolio(Base):
     __tablename__ = 'portfolio'
-
-    symbol = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    symbol = Column(String)
     quantity = Column(Float)
     price = Column(Float)
 
