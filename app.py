@@ -53,18 +53,22 @@ class HomeResource(Resource):
 
 class RegisterUser(Resource):
     def post(self):
-
-        json_data = request.json
-        #json_data = user_schema.dump(json_data)
+        if request.form:
+            data = request.form
+        elif request.json:
+            data = request.json
 
         session = Session()
 
-        if session.query(Users).filter(Users.email == json_data['email']).first():
+        # Checks if the user is already registered on the database
+        if session.query(Users).filter(Users.email == data['email']).first():
             return {"message": "user already registered"}
         
+        # Adds a new user to the database
         user = Users(
-            email=json_data['email'], 
-            password=pbkdf2_sha256.hash(json_data['password'])
+            email=data['email'],
+            # Encrypts the user´s password 
+            password=pbkdf2_sha256.hash(data['password'])
         )
 
         session.add(user)
@@ -100,13 +104,20 @@ class UserLogin(Resource):
 
         session = Session()
 
+        # getting the user in the data base
         user = session.query(Users).filter(Users.email == data['email']).first()
 
+        # Checking if the user password matches with the encrypted password
         if user and pbkdf2_sha256.verify(data['password'], user.password):
+
+            # Setting a expire time for the jwt token
             expires = timedelta(hours=24)
+
+            # Creating the access_token, sending on it the user.id
             access_token = create_access_token(identity=user.id, expires_delta=expires)
             return {"access_token": access_token}
 
+        # if the user does not exist, return invalid credentials
         return {"message": "Invalid credentials"}
 
 class PortfoliosResource(Resource):
@@ -131,7 +142,7 @@ class PortfoliosResource(Resource):
 class PortfolioResource(Resource):   
     def delete(self, symbol):
         """
-        Get portfolio information
+        Delete portfolio information
 
         ---
         tags:
