@@ -1,6 +1,6 @@
 # Python Flask Crypto API
 
-![API_BackEnd](https://github.com/estudart/Crypto_Portfolio_Managment/blob/main/images/BackEnd_Code.PNG)
+![API_BackEnd](https://github.com/estudart/Crypto_Portfolio_Managment/blob/main/images/API_Doc.PNG)
 
 ## Description
 This repository contains a Flask project for building a RESTful API to manage information about a Crypto Portfolio WebApp. Here I have created all the back-end that manages user interactiion with the website such as login, register, post new orders and also getting information about executed orders and portfolio.
