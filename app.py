@@ -74,6 +74,22 @@ class RegisterUser(Resource):
 
 
 class UserLogin(Resource):
+    """
+    Login of user into the application
+
+    ---
+    tags:
+        - Login
+    parameters:
+        - name: email
+          in: formData
+          type: string
+          required: true
+        - name: password
+          in: formData
+          type: string
+          required: true
+    """
     def post(self):
         json_data = request.json
         print(json_data['email'])
@@ -136,8 +152,33 @@ class ExecOrderResource(Resource):
     @jwt_required()
     def post(self):
         """
-        Get information regarding the executed orders
+        Post a new order
 
+        ---
+        tags:
+            - Executed Orders
+
+        parameters:
+            - name: symbol
+              in: formData
+              type: string
+              required: true
+            - name: side
+              in: formData
+              type: string
+              required: true
+            - name: quantity
+              in: formData
+              type: float
+              required: true
+            - name: price
+              in: formData
+              type: float
+              required: true
+            - name: currency
+              in: formData
+              type: string
+              required: true
         """
         json_data = request.json
         print(json_data['symbol'])
