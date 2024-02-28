@@ -1,6 +1,6 @@
-# Python Flask Planets API
+# Python Flask Crypto API
 
-![API_BackEnd](https://github.com/estudart/planets-api/blob/main/API_BackEnd.PNG)
+![API_BackEnd](https://github.com/estudart/Crypto_Portfolio_Managment/blob/main/images/BackEnd_Code.PNG)
 
 ## Description
 This repository contains a Flask project for building a RESTful API to manage information about a Crypto Portfolio WebApp. Here I have created all the back that manages user interactiion
@@ -29,23 +29,19 @@ with the website such as login, register, post new orders and also getting infor
 
 ## Endpoints
 
-[API Documentation](https://estudart.pythonanywhere.com/apidocs/)
 
-![API_BackEnd](https://github.com/estudart/planets-api/blob/main/Doc.PNG)
+![API_BackEnd](https://github.com/estudart/Crypto_Portfolio_Managment/blob/main/images/BackEnd_Code.PNG)
 
-- `/planets`:
-  - `GET`: Retrieve a list of planets.
-  - `POST`: Create a new planet.
-- `/planet/<id>`:
-  - `GET`: Retrieve information about a specific planet.
-  - `PUT`: Update information about a specific planet.
-  - `DELETE`: Delete a specific planet.
-- `/user/<id>`:
-  - `GET`: Retrieve information about a specific user.
-  - `PUT`: Update information about a specific user.
-  - `DELETE`: Delete a specific user.
-- `/users`:
-  - `GET`: Retrieve a list of all users.
-  - `POST`: Create a new user.
-- `/create_planets`:
-  - `GET`: Populate the database with predefined planet data.
+- "/portfolio":
+  - "GET": Retrieve portfolio information
+  - "POST": Create a new portfolio
+- "/portfolio/<symbol>":
+  - "DELETE": Delete portfolio information
+- "/exec_order":
+  - "POST": Post a new order
+  - "GET": Get executed orders
+- "/register_user":
+  - "POST": Register a new user on the application
+- "/login":
+  - "POST": Login of user into the application
+
