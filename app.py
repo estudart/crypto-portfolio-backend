@@ -36,23 +36,25 @@ swagger_config = {
 
 swagger = Swagger(app, config=swagger_config)
 
-class HomeResource(Resource):
-    def get(self):
+class RegisterUser(Resource):
+    def post(self):
         """
-        Welcome to the home page!
+        Register a new user on the application
 
         ---
         tags:
-            - Welcome
-        responses:
-            200:
-                description: A welcome message
+            - Register
+            
+        parameters:
+            - name: email
+              in: formData
+              type: string
+              required: true
+            - name: password
+              in: formData
+              type: string
+              required: true
         """
-        return {"message": "Welcome to the home page"}
-
-
-class RegisterUser(Resource):
-    def post(self):
         if request.form:
             data = request.form
         elif request.json:
@@ -78,23 +80,25 @@ class RegisterUser(Resource):
 
 
 class UserLogin(Resource):
-    """
-    Login of user into the application
-
-    ---
-    tags:
-        - Login
-    parameters:
-        - name: email
-          in: formData
-          type: string
-          required: true
-        - name: password
-          in: formData
-          type: string
-          required: true
-    """
     def post(self):
+        """
+        Login of user into the application
+
+        ---
+        tags:
+            - Login
+            
+        parameters:
+            - name: email
+              in: formData
+              type: string
+              required: true
+            - name: password
+              in: formData
+              type: string
+              required: true
+        """
+
         if request.form:
             data = request.form
         elif request.json:
@@ -257,7 +261,6 @@ class ExecOrderResource(Resource):
         json_exec_orders = exec_orders_schema.dump(exec_orders)
         return json_exec_orders
 
-api.add_resource(HomeResource, "/")
 api.add_resource(PortfoliosResource, "/portfolio")
 api.add_resource(PortfolioResource, "/portfolio/<string:symbol>")
 api.add_resource(ExecOrderResource, "/exec_order")
