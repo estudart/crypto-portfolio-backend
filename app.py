@@ -91,14 +91,18 @@ class UserLogin(Resource):
           required: true
     """
     def post(self):
-        json_data = request.json
-        print(json_data['email'])
+        if request.form:
+            data = request.form
+        elif request.json:
+            data = request.json
+        data = request.json
+        print(data['email'])
 
         session = Session()
 
-        user = session.query(Users).filter(Users.email == json_data['email']).first()
+        user = session.query(Users).filter(Users.email == data['email']).first()
 
-        if user and pbkdf2_sha256.verify(json_data['password'], user.password):
+        if user and pbkdf2_sha256.verify(data['password'], user.password):
             expires = timedelta(hours=24)
             access_token = create_access_token(identity=user.id, expires_delta=expires)
             return {"access_token": access_token}
@@ -180,8 +184,11 @@ class ExecOrderResource(Resource):
               type: string
               required: true
         """
-        json_data = request.json
-        print(json_data['symbol'])
+        if request.form:
+            data = request.form
+        elif request.json:
+            data = request.json
+        print(data['symbol'])
         current_user_id = get_jwt_identity()
         print(current_user_id)
 
@@ -189,26 +196,26 @@ class ExecOrderResource(Resource):
             session = Session()
 
             # Check if the portfolio exists for the symbol and user ID
-            find_portfolio = session.query(Portfolio).filter(Portfolio.symbol == json_data["symbol"], Portfolio.user_id == current_user_id).first()
+            find_portfolio = session.query(Portfolio).filter(Portfolio.symbol == data["symbol"], Portfolio.user_id == current_user_id).first()
 
             if not find_portfolio:
                 # Create a new portfolio entry if it doesn't exist
-                new_portfolio = {"symbol": json_data["symbol"], "quantity": 0, "price": 0, "user_id": current_user_id}
+                new_portfolio = {"symbol": data["symbol"], "quantity": 0, "price": 0, "user_id": current_user_id}
                 find_portfolio = Portfolio(**new_portfolio)
                 session.add(find_portfolio)
 
             # Update portfolio based on order
-            if json_data["side"] == "BUY":
-                find_portfolio.quantity += json_data["quantity"]
-                find_portfolio.price += json_data["price"]
-            elif json_data["side"] == "SELL":
-                find_portfolio.quantity -= json_data["quantity"]
-                find_portfolio.price -= json_data["price"]
+            if data["side"] == "BUY":
+                find_portfolio.quantity += data["quantity"]
+                find_portfolio.price += data["price"]
+            elif data["side"] == "SELL":
+                find_portfolio.quantity -= data["quantity"]
+                find_portfolio.price -= data["price"]
             else:
                 return {"error": "Invalid side specified"}, 400
 
             # Create a new order entry
-            user_order = {"symbol": json_data["symbol"], "side": json_data["side"], "quantity": json_data["quantity"], "price": json_data["price"], "currency": json_data["currency"],"user_id": current_user_id}
+            user_order = {"symbol": data["symbol"], "side": data["side"], "quantity": data["quantity"], "price": data["price"], "currency": data["currency"],"user_id": current_user_id}
             new_order = ExecOrder(**user_order)
             session.add(new_order)
             session.commit()
