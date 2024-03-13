@@ -76,7 +76,7 @@ class RegisterUser(Resource):
         session.add(user)
         session.commit()
 
-        return {"message": "User created"}, 201
+        return {"message": "User created"}
 
 
 class UserLogin(Resource):
@@ -204,6 +204,8 @@ class ExecOrderResource(Resource):
         elif request.json:
             data = request.json
         print(data['symbol'])
+        print(data['quantity'])
+        print(data['currency'])
         current_user_id = get_jwt_identity()
         print(current_user_id)
 
