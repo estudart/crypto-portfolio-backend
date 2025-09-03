@@ -1,17 +1,21 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12.0
+FROM python:3.12-slim
 
-# Set the working directory in the container
+# Set working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
-
-# Install any needed dependencies specified in requirements.txt
+# Install dependencies first (better caching)
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make port 5000 available to the world outside this container
-EXPOSE 5000
+# Copy the rest of the app
+COPY . .
 
-# Run flask when the container launches
-CMD ["flask", "run", "--host", "0.0.0.0"]
+# Railway sets PORT dynamically, so use it
+ENV PORT=8000
+
+# Expose the port
+EXPOSE 8000
+
+# Run with gunicorn (production server)
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:${PORT}"]
